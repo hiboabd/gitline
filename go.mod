@@ -2,7 +2,10 @@ module hiboabd/gitline
 
 go 1.17
 
-require github.com/gin-gonic/gin v1.7.4
+require (
+	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
+	github.com/gin-gonic/gin v1.7.4
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
