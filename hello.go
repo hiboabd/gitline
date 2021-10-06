@@ -26,8 +26,8 @@ func main() {
 	// enables webserver to serve any static files from the views directory
 	router.Use(static.Serve("/", static.LocalFile("./views", true)))
 
-	// start web server on port 3000
-	err := router.Run(":3001")
+	// start web server
+	err := router.Run()
 	if err != nil {
 		return
 	}
