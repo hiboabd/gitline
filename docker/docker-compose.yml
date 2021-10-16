@@ -5,4 +5,4 @@ services:
     build:
       context: ..
       dockerfile: ./docker/gitline/Dockerfile
-    ports: ["3001:3001"]
+    ports: ["3001:1235"]
