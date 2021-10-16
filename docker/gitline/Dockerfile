@@ -27,10 +27,10 @@ WORKDIR /app
 
 RUN mkdir -p web/static
 
-COPY web/assets web/assets
-COPY webpack.config.js .
-COPY package.json .
-COPY yarn.lock .
+COPY ../../web/assets web/assets
+COPY ../../webpack.config.js .
+COPY ../../package.json .
+COPY ../../yarn.lock .
 
 RUN yarn install
 RUN yarn build
@@ -39,12 +39,12 @@ FROM base as build-env
 
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
+COPY ../../go.mod .
+COPY ../../go.sum .
 
 RUN go mod download
 
-COPY . .
+COPY ../../. .
 
 RUN go build -a -installsuffix cgo -o /go/bin/gitline
 
