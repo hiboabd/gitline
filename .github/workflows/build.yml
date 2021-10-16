@@ -9,26 +9,26 @@ on:
       - main
 
 jobs:
-#  lint:
-#    name: GO lint
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Run linting
-#        uses: golangci/golangci-lint-action@v2
-#
-#  cypress:
-#    name: Cypress
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Run cypress
-#        run: |
-#          docker-compose -f docker/docker-compose.ci.yml run cypress
+  lint:
+    name: GO lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run linting
+        uses: golangci/golangci-lint-action@v2
+
+  cypress:
+    name: Cypress
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run cypress
+        run: |
+          docker-compose -f docker/docker-compose.ci.yml run cypress
   build:
     name: Build and deploy app to heroku
     runs-on: ubuntu-latest
-#    needs: [ 'lint', 'cypress' ]
+    needs: [ 'lint', 'cypress' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,7 +37,6 @@ jobs:
           docker build --no-cache --tag registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f docker/gitline/Dockerfile .
       - name: Deploy to Heroku
         run: |
-          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com
+          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=${{ secrets.HEROKU_EMAIL }} --password-stdin registry.heroku.com
           docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
-          heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
           heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
