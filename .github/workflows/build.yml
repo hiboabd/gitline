@@ -33,41 +33,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build Docker Container
-        env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
         run: |
           docker build --no-cache --tag registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f docker/gitline/Dockerfile .
       - name: Login to Heroku Container registry
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        run: docker login --username=${{ secrets.HEROKU_EMAIL }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
       - name: Push Container
-        env:
-          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
         run: docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
       - name: Push to Heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
       - name: Release
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
-#      - name: Deploy to Heroku
-#        env:
-#          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-#          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
-#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-#          DOCKERFILE: "docker/gitline/Dockerfile"
-#          DOCKER_OPTIONS: "--no-cache"
-#        run: |
-#          echo ${HEROKU_API_KEY} | docker login \
-#            --username=${HEROKU_EMAIL} \
-#            registry.heroku.com \
-#            --password-stdin
-#          docker build \
-#            -f ${DOCKERFILE} \
-#            ${DOCKER_OPTIONS} \
-#            --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
-#          heroku container:push web --app ${HEROKU_APP_NAME}
-#          heroku container:release web --app ${HEROKU_APP_NAME}
