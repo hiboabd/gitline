@@ -1,0 +1,8 @@
+version: "3.6"
+
+services:
+  gitline:
+    build:
+      context: ..
+      dockerfile: ./docker/gitline/Dockerfile
+    ports: ["3001:3001"]
