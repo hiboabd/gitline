@@ -35,11 +35,9 @@ jobs:
       - name: Build Docker Container
         run: |
           docker build --no-cache --tag registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web -f docker/gitline/Dockerfile .
-      - name: Login to Heroku Container registry
-        run: docker login --username=${{ secrets.HEROKU_EMAIL }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-      - name: Push Container
-        run: docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
-      - name: Push to Heroku
-        run: heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
-      - name: Release
-        run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
+      - name: Deploy to Heroku
+        run: |
+          echo ${{ secrets.HEROKU_API_KEY }} | docker login --username=_ --password-stdin registry.heroku.com
+          docker push registry.heroku.com/${{ secrets.HEROKU_APP_NAME }}/web
+          heroku container:push -a ${{ secrets.HEROKU_APP_NAME }} web
+          heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web
