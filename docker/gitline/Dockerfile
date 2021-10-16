@@ -61,3 +61,4 @@ COPY --from=build-env /go/bin/gitline gitline
 COPY --from=build-env /app/web/templates web/templates
 COPY --from=asset-env /app/web/static web/static
 ENTRYPOINT ["./gitline"]
+CMD ["./gitline"]
