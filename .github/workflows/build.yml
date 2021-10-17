@@ -9,6 +9,34 @@ on:
       - main
 
 jobs:
+  test:
+    name: Test Gitline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - uses: unfor19/install-aws-cli-action@v1
+
+      - name: Resolve GO mod cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Resolve GO Dependencies
+        run: |
+          go mod download
+      - name: Setup gotestsum
+        uses: autero1/action-gotestsum@v1.0.0
+        with:
+          gotestsum_version: 1.6.4
+
+      - run: mkdir -p /tmp/test-results
+
+      - name: Run Tests
+        run: |
+          gotestsum --junitfile /tmp/test-results/unit-tests.xml -- ./... -coverprofile=/tmp/test-coverage.txt
   lint:
     name: GO lint
     runs-on: ubuntu-latest

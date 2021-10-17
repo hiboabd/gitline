@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/hiboabd/gitline/controllers"
 	"os"
 )
 
@@ -14,14 +14,7 @@ func main() {
 	router.Use(static.Serve("/assets", static.LocalFile("./web/assets", true)))
 	router.Use(static.Serve("/static", static.LocalFile("./web/static", true)))
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title": "Gitline",
-		})
-	})
-
-	//context := &gin.Context{}
-	//router.GET("/", controllers.RenderHomepage(context))
+	router.GET("/", controllers.RenderHomepage)
 
 	err := router.Run(":" + port)
 	if err != nil {
