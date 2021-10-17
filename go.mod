@@ -1,4 +1,4 @@
-module hiboabd/gitline
+module github.com/hiboabd/gitline
 
 go 1.17
 

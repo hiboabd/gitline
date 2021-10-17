@@ -1,0 +1,33 @@
+{
+  "name": "gitline",
+  "version": "1.0.0",
+  "description": "Gitline takes a username and displays user activity across time",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^6.4.0",
+    "cypress": "^8.6.0",
+    "mini-css-extract-plugin": "^2.4.2",
+    "sass": "^1.43.2",
+    "sass-loader": "^12.2.0",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.0"
+  },
+  "scripts": {
+    "cypress": "cypress open",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiboabd/gitline.git"
+  },
+  "author": "Hibo Abdilaahi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hiboabd/gitline/issues"
+  },
+  "homepage": "https://github.com/hiboabd/gitline#readme"
+}

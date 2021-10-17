@@ -1,0 +1,18 @@
+version: "3.6"
+
+services:
+  gitline:
+    build:
+      context: ..
+      dockerfile: ./docker/gitline/Dockerfile
+    environment:
+        PORT: 3001
+    ports: ["3001:1235"]
+
+  cypress:
+    build:
+      context: ..
+      dockerfile: ./docker/cypress/Dockerfile
+    command: ["--headless", "-b", "chrome"]
+    depends_on:
+      - gitline

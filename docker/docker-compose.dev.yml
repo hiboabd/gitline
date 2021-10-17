@@ -1,0 +1,13 @@
+version: "3.6"
+
+services:
+  gitline:
+    build:
+      context: ..
+      dockerfile: ./docker/gitline/Dockerfile
+      target: dev
+    ports:
+        - '2346:2346'
+        - '3001:1235'
+    volumes:
+        - ..:/app:rw,delegated
