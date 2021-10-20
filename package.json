@@ -18,7 +18,8 @@
   },
   "scripts": {
     "cypress": "cypress open",
-    "build": "webpack"
+    "build": "webpack",
+    "test-controllers": "cd controllers && go test"
   },
   "repository": {
     "type": "git",
