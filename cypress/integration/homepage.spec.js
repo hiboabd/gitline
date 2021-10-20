@@ -5,7 +5,7 @@ describe("Homepage", () => {
         cy.visit("/");
     });
 
-    it("displays hello world message", () => {
-        cy.get("h1").should("contain", "Hello World!");
+    it("displays gitline heading", () => {
+        cy.get("h1").should("contain", "Gitline");
     });
 });
