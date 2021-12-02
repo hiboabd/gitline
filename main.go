@@ -9,14 +9,14 @@ import (
 
 func main() {
 	port := getEnv("PORT", "1235")
-	//apiUrl := getEnv("API_URL", "")
 	router := gin.Default()
 	router.LoadHTMLGlob("web/templates/*")
 	router.Use(static.Serve("/assets", static.LocalFile("./web/assets", true)))
 	router.Use(static.Serve("/static", static.LocalFile("./web/static", true)))
 
 	router.GET("/", controllers.RenderHomepage)
-	//router.GET( "/api/v1/*", )
+	router.GET("/timeline", controllers.GetRepositoryData)
+
 	err := router.Run(":" + port)
 	if err != nil {
 		return
