@@ -1,18 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>{{ .title }}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
-        <link href="/static/stylesheets/all.css" rel="stylesheet">
-        <script src="/static/javascript/all.js"></script>
-    </head>
-    <body>
+{{ template "page" . }}
+{{ define "main" }}
+    <div class="timeline-page-title">
         <h1>Timeline</h1>
-        {{ range .Repositories }}
-            <p>{{.Name}}</p>
-        {{ end }}
-    </body>
-</html>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="yearly-timeline">
+                    {{ range .Repositories }}
+                        <div class="timeline">
+                            <a href="{{.URL}}" class="timeline-content">
+                                <h3 class="title">{{.Name}}</h3>
+                                <h3 class="title">{{.CreatedAt}}</h3>
+                                <p class="description">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer males uada tellus
+                                    lorem, et condimentum neque commodo Integer males uada tellus lorem, et condimentum
+                                    neque commodo
+                                </p>
+                            </a>
+                        </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}
