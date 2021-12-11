@@ -34,6 +34,7 @@ func getRouter(withTemplates bool) *gin.Engine {
 
 func TestRenderHomepage(t *testing.T) {
 	r := getRouter(true)
+	r.HTMLRender = CreateMyRender("../web/templates")
 
 	r.GET("/", RenderHomepage)
 
@@ -43,7 +44,7 @@ func TestRenderHomepage(t *testing.T) {
 		statusOK := w.Code == http.StatusOK
 
 		p, err := ioutil.ReadAll(w.Body)
-		pageOK := err == nil && strings.Index(string(p), "<title>Gitline</title>") > 0
+		pageOK := err == nil && strings.Index(string(p), "<h1 class=\"heading\">Gitline</h1>") > 0
 
 		return statusOK && pageOK
 	})

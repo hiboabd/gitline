@@ -30,18 +30,22 @@ type Repository struct {
 
 type Repositories []Repository
 
+type apiRepository struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Owner     Owner  `json:"owner"`
+	URL       string `json:"html_url"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	PushedAt  string `json:"pushed_at"`
+	Size      int    `json:"size"`
+	Language  string `json:"language"`
+}
+
+type RepositoriesList []apiRepository
+
 type apiRepositories struct {
-	Repository []struct {
-		ID        int    `json:"id"`
-		Name      string `json:"name"`
-		Owner     Owner  `json:"owner"`
-		URL       string `json:"html_url"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
-		PushedAt  string `json:"pushed_at"`
-		Size      int    `json:"size"`
-		Language  string `json:"language"`
-	} `json:"repositories"`
+	RepositoriesList `json:"repositories"`
 }
 
 const userFacingDateFormat string = "02/01/2006"
@@ -67,7 +71,7 @@ func GetRepositoryData(c *gin.Context) {
 
 	c.HTML(
 		http.StatusOK,
-		"timeline.gotmpl",
+		"timeline",
 		gin.H{
 			"Repositories": userRepositories,
 		},
@@ -76,7 +80,7 @@ func GetRepositoryData(c *gin.Context) {
 
 func formatRepositories(r apiRepositories) Repositories {
 	var repositories Repositories
-	for _, t := range r.Repository {
+	for _, t := range r.RepositoriesList {
 		var repository = Repository{
 			ID:   t.ID,
 			Name: t.Name,

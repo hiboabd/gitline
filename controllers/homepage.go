@@ -8,7 +8,7 @@ import (
 func RenderHomepage(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
-		"home.gotmpl",
+		"home",
 		gin.H{},
 	)
 }
