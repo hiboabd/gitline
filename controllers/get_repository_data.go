@@ -45,7 +45,7 @@ type apiRepository struct {
 type RepositoriesList []apiRepository
 
 type apiRepositories struct {
-	RepositoriesList `json:"repositories"`
+	Repositories RepositoriesList `json:"repositories"`
 }
 
 const userFacingDateFormat string = "02/01/2006"
@@ -59,14 +59,17 @@ func GetRepositoryData(c *gin.Context) {
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body) // response body is []byte
+	body, _ := ioutil.ReadAll(resp.Body) // response body is []byte
 
 	var result apiRepositories
-	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
+	if err = json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
 		fmt.Println(err)
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	userRepositories := formatRepositories(result)
 
 	c.HTML(
@@ -80,7 +83,7 @@ func GetRepositoryData(c *gin.Context) {
 
 func formatRepositories(r apiRepositories) Repositories {
 	var repositories Repositories
-	for _, t := range r.RepositoriesList {
+	for _, t := range r.Repositories {
 		var repository = Repository{
 			ID:   t.ID,
 			Name: t.Name,
