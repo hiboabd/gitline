@@ -37,8 +37,20 @@ This hosts it on `localhost:1235`
 
 ## Run Cypress tests
 
-`docker-compose -f docker/docker-compose.dev.yml up -d --build `
+`docker-compose -f docker/docker-compose.dev.yml up -d --build --force-recreate`
 
 `yarn && yarn cypress `
     
+-------------------------------------------------------------------
+
+## Run Unit/Integration tests
+
+To run unit/integration tests locally, you will require two terminals.
+
+In the first terminal, navigate to the server repository and run: `go run server.go handler.go`
+In the second terminal, run: `npm run test-controllers`
+
+The first command will ensure the mock server is up and running. The second command will execute the tests. 
+You must run the commands in the above order.
+ 
 -------------------------------------------------------------------

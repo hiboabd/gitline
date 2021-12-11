@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -53,12 +54,16 @@ const userFacingDateFormat string = "02/01/2006"
 func GetRepositoryData(c *gin.Context) {
 	apiUrl := getEnv("API_URL", "")
 	resp, err := http.Get(apiUrl + "/api/v1/repositories")
-
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}(resp.Body)
 	body, _ := ioutil.ReadAll(resp.Body) // response body is []byte
 
 	var result apiRepositories
@@ -67,9 +72,6 @@ func GetRepositoryData(c *gin.Context) {
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		log.Fatalln(err)
-	}
 	userRepositories := formatRepositories(result)
 
 	c.HTML(
