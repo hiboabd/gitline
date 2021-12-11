@@ -2,45 +2,31 @@ package controllers
 
 import (
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
 
-//func TestGetRepositoryData(t *testing.T) {
-//	json := ` {
-//	   "repositories": [
-//		 {
-//			  "id": 263404525,
-//			  "name": "airportJavaScript",
-//			  "owner": {
-//				"id": 51047911,
-//			  },
-//			  "html_url": "https://github.com/hiboabd/airportJavaScript",
-//			  "description": "Test description",
-//			  "created_at": "2020-05-12T17:25:38Z",
-//			  "updated_at": "2020-05-13T09:29:59Z",
-//			  "pushed_at": "2020-05-13T09:29:56Z",
-//			  "size": 70,
-//			  "language": "JavaScript",
-//		 },
-//	   ]
-//	 } `
-//
-//	r := getRouter(true)
-//
-//	r.GET("/timeline", GetRepositoryData)
-//
-//	req, _ := http.NewRequest("GET", "/timeline", nil)
-//
-//	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
-//		statusOK := w.Code == http.StatusOK
-//
-//		p, err := ioutil.ReadAll(w.Body)
-//		pageOK := err == nil && strings.Index(string(p), "<h1>Timeline</h1>") > 0
-//
-//		return statusOK && pageOK
-//	})
-//}
+func TestGetRepositoryData(t *testing.T) {
+	r := getRouter(true)
+	r.HTMLRender = CreateMyRender("../web/templates")
+
+	r.GET("/timeline", GetRepositoryData)
+
+	req, _ := http.NewRequest("GET", "/timeline", nil)
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		statusOK := w.Code == http.StatusOK
+
+		p, err := ioutil.ReadAll(w.Body)
+		pageOK := err == nil && strings.Index(string(p), "<h1>Timeline</h1>") > 0
+
+		return statusOK && pageOK
+	})
+}
 
 func SetUpTestData() Repositories {
 	repositories := Repositories{

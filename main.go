@@ -7,10 +7,11 @@ import (
 	"os"
 )
 
+
 func main() {
 	port := getEnv("PORT", "1235")
 	router := gin.Default()
-	router.LoadHTMLGlob("web/templates/*")
+	router.HTMLRender = controllers.CreateMyRender("web/templates")
 	router.Use(static.Serve("/assets", static.LocalFile("./web/assets", true)))
 	router.Use(static.Serve("/static", static.LocalFile("./web/static", true)))
 
