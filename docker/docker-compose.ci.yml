@@ -7,8 +7,11 @@ services:
       dockerfile: ./docker/gitline/Dockerfile
     environment:
         PORT: 3001
+        API_URL: http://mock-server:2000
     ports:
       - '3001:1235'
+    depends_on:
+      - mock-server
 
   cypress:
     build:
@@ -17,3 +20,13 @@ services:
     command: ["--headless", "-b", "chrome"]
     depends_on:
       - gitline
+      - mock-server
+
+  mock-server:
+    build:
+      context: ..
+      dockerfile: ./docker/mock-server/Dockerfile
+    ports:
+      - '2000:2000'
+    volumes:
+      - ..:/app:rw,delegated
