@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"io/ioutil"
 	"log"
@@ -43,15 +42,17 @@ type apiRepository struct {
 	Language  string `json:"language"`
 }
 
-type RepositoriesList []apiRepository
-
 type apiRepositories struct {
-	Repositories RepositoriesList `json:"repositories"`
+	Repositories []apiRepository `json:"repositories"`
+}
+
+type RepositoryData struct {
+	Repositories Repositories
 }
 
 const userFacingDateFormat string = "02/01/2006"
 
-func GetRepositoryData(c *gin.Context) {
+func GetRepositoryData(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
 	apiUrl := getEnv("API_URL", "")
 	resp, err := http.Get(apiUrl + "/api/v1/repositories")
 	if err != nil {
@@ -73,17 +74,10 @@ func GetRepositoryData(c *gin.Context) {
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	userRepositories := formatRepositories(result)
-
-	c.HTML(
-		http.StatusOK,
-		"timeline",
-		gin.H{
-			"Repositories": userRepositories,
-		},
-	)
+	return "timeline.html", userRepositories, nil
 }
 
-func formatRepositories(r apiRepositories) Repositories {
+func formatRepositories(r apiRepositories) RepositoryData {
 	var repositories Repositories
 	for _, t := range r.Repositories {
 		var repository = Repository{
@@ -104,7 +98,7 @@ func formatRepositories(r apiRepositories) Repositories {
 	}
 
 	sortedRepositories := sortRepositoriesByCreatedDate(repositories)
-	return sortedRepositories
+	return RepositoryData{sortedRepositories}
 }
 
 func getEnv(key, def string) string {

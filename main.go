@@ -1,26 +1,29 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/mux"
 	"github.com/hiboabd/gitline/controllers"
+	"github.com/hiboabd/gitline/render"
+	"net/http"
 	"os"
 )
 
+func Configure() http.Handler {
+	render.Register()
+	router := mux.NewRouter()
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./web/assets"))))
+	router.HandleFunc("/", render.Render(controllers.RenderHomepage))
+	router.HandleFunc("/timeline", render.Render(controllers.GetRepositoryData))
+
+	return router
+}
 
 func main() {
 	port := getEnv("PORT", "1235")
-	router := gin.Default()
-	router.HTMLRender = controllers.CreateMyRender("web/templates")
-	router.Use(static.Serve("/assets", static.LocalFile("./web/assets", true)))
-	router.Use(static.Serve("/static", static.LocalFile("./web/static", true)))
-
-	router.GET("/", controllers.RenderHomepage)
-	router.GET("/timeline", controllers.GetRepositoryData)
-
-	err := router.Run(":" + port)
+	err := http.ListenAndServe(":" + port, Configure())
 	if err != nil {
-		return
+		panic(err)
 	}
 }
 
