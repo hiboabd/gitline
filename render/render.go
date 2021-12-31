@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"path/filepath"
 )
 
 type PageHandler func(w http.ResponseWriter, r *http.Request) (templateName string, data interface{}, err error)
@@ -17,17 +16,8 @@ const (
 
 var templates = map[string]*template.Template{}
 
-func Register() {
-	layouts, _ := template.
-		New("").
-		Funcs(map[string]interface{}{}).
-		ParseGlob("/web/templates/*.html")
-
-	files, _ := filepath.Glob("/web/templates/*.html")
-
-	for _, file := range files {
-		templates[filepath.Base(file)] = template.Must(template.Must(layouts.Clone()).ParseFiles(file))
-	}
+func Register(templateName string, template *template.Template) {
+	templates[templateName] = template
 }
 
 func Render(h PageHandler) http.HandlerFunc {
