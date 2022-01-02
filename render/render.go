@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type PageHandler func(w http.ResponseWriter, r *http.Request) (templateName string, data interface{}, err error)
+type PageHandler func() (templateName string, data interface{}, err error)
 
 const (
 	ErrRenderingPage = "Error rendering page"
@@ -22,7 +22,7 @@ func Register(templateName string, template *template.Template) {
 
 func Render(h PageHandler) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		templateName, data, err := h(w, r)
+		templateName, data, err := h()
 		if err != nil {
 			fmt.Printf("Error handling request: %s\n", err)
 			http.Error(w, ErrRenderingPage, http.StatusInternalServerError)
@@ -31,8 +31,8 @@ func Render(h PageHandler) http.HandlerFunc {
 
 		tmpl, ok := templates[templateName]
 		if !ok {
-			fmt.Printf("No tmpl not found: %s\n", templateName)
-			http.Error(w, ErrRenderingPage, http.StatusInternalServerError)
+			fmt.Printf("Template not found: %s\n", templateName)
+			http.Error(w, ErrRenderingPage, http.StatusNotFound)
 			return
 		}
 

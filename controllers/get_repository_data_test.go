@@ -1,31 +1,66 @@
 package controllers
 
 import (
+	"bytes"
+	"github.com/hiboabd/gitline/mocks"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
 )
 
 func TestGetRepositoryData(t *testing.T) {
-	r := getRouter(true)
-	r.HTMLRender = CreateMyRender("../web/templates")
+	mockClient := &mocks.MockClient{}
+	client, _ := NewClient(mockClient, "http://mock-server:2000")
 
-	r.GET("/timeline", GetRepositoryData)
+	json := `{"repositories": [
+			{
+			"id": 1,
+			"name": "Repository 1",
+			"owner": {
+			"id": 1
+			},
+			"html_url": "www.testurl.com",
+			"created_at": "2020-05-12T17:25:38Z",
+			"updated_at": "2020-05-13T09:29:59Z",
+			"pushed_at": "2020-05-13T09:29:56Z",
+			"size": 70,
+			"language": "JavaScript"
+			}
+		]}`
 
-	req, _ := http.NewRequest("GET", "/timeline", nil)
+	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
 
-	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
-		statusOK := w.Code == http.StatusOK
+	mocks.GetDoFunc = func(*http.Request) (*http.Response, error) {
+		return &http.Response{
+			StatusCode: 200,
+			Body:       r,
+		}, nil
+	}
 
-		p, err := ioutil.ReadAll(w.Body)
-		pageOK := err == nil && strings.Index(string(p), "<h1>Timeline</h1>") > 0
+	expectedData := RepositoryData{
+		Repositories: Repositories{
+			Repository{
+				ID:   1,
+				Name: "Repository 1",
+				Owner: Owner{
+					ID: 1,
+				},
+				URL:       "www.testurl.com",
+				CreatedAt: "12/05/2020",
+				UpdatedAt: "13/05/2020",
+				PushedAt:  "13/05/2020",
+				Size:      70,
+				Language:  "JavaScript",
+			},
+		},
+	}
 
-		return statusOK && pageOK
-	})
+	template, userRepositories, err := client.GetRepositoryData()
+	assert.Equal(t, template, "timeline.html")
+	assert.Equal(t, nil, err)
+	assert.Equal(t, expectedData, userRepositories)
 }
 
 func SetUpTestData() Repositories {
@@ -90,19 +125,19 @@ func TestFormatRepositories(t *testing.T) {
 		unformattedRepositoryList,
 	}
 
-	expectedResponse := Repositories{
-		Repository{
-			ID:   1,
-			Name: "Test Repository",
-			Owner: Owner{
-				1,
+	expectedResponse := RepositoryData{
+		Repositories: Repositories{
+			Repository{
+				ID:        1,
+				Name:      "Test Repository",
+				Owner:     Owner{ID: 1},
+				URL:       "Test URL",
+				CreatedAt: "12/05/2020",
+				UpdatedAt: "12/05/2020",
+				PushedAt:  "12/05/2020",
+				Size:      40,
+				Language:  "Golang",
 			},
-			URL:       "Test URL",
-			CreatedAt: "12/05/2020",
-			UpdatedAt: "12/05/2020",
-			PushedAt:  "12/05/2020",
-			Size:      40,
-			Language:  "Golang",
 		},
 	}
 

@@ -36,7 +36,6 @@ jobs:
 
       - name: Run Tests
         run: |
-          docker-compose -f docker/docker-compose.ci.yml up -d --build
           gotestsum --junitfile /tmp/test-results/unit-tests.xml -- ./... -coverprofile=/tmp/test-coverage.txt
   lint:
     name: GO lint

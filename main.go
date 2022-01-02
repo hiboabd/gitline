@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/hiboabd/gitline/controllers"
 	"github.com/hiboabd/gitline/render"
@@ -17,11 +18,17 @@ func Configure() http.Handler {
 		template.Must(template.ParseFiles("web/templates/index.html", "web/templates/timeline.html")),
 	)
 
+	apiUrl := getEnv("API_URL", "")
+	client, err := controllers.NewClient(http.DefaultClient, apiUrl)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+	}
+
 	router := mux.NewRouter()
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./web/assets"))))
-	router.HandleFunc("/", render.Render(controllers.RenderHomepage))
-	router.HandleFunc("/timeline", render.Render(controllers.GetRepositoryData))
+	router.HandleFunc("/", render.Render(client.RenderHomepage))
+	router.HandleFunc("/timeline", render.Render(client.GetRepositoryData))
 
 	return router
 }

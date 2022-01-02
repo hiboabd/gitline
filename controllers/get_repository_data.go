@@ -2,12 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
 	"sort"
 	"time"
 )
@@ -42,6 +37,8 @@ type apiRepository struct {
 	Language  string `json:"language"`
 }
 
+type RepositoriesList []apiRepository
+
 type apiRepositories struct {
 	Repositories []apiRepository `json:"repositories"`
 }
@@ -52,29 +49,24 @@ type RepositoryData struct {
 
 const userFacingDateFormat string = "02/01/2006"
 
-func GetRepositoryData(w http.ResponseWriter, r *http.Request) (string, interface{}, error) {
-	apiUrl := getEnv("API_URL", "")
-	resp, err := http.Get(apiUrl + "/api/v1/repositories")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	defer func(Body io.ReadCloser) {
-		err = Body.Close()
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}(resp.Body)
-	body, _ := ioutil.ReadAll(resp.Body) // response body is []byte
-
+func (c *Client) GetRepositoryData() (string, interface{}, error) {
 	var result apiRepositories
-	if err = json.Unmarshal(body, &result); err != nil { // Parse []byte to the go struct pointer
-		fmt.Println(err)
+
+	req, err := c.newRequest(http.MethodGet, "/api/v1/repositories", nil)
+	if err != nil {
+		return "timeline.html", result, err
 	}
+
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return "timeline.html", result, err
+	}
+
+	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	userRepositories := formatRepositories(result)
-	return "timeline.html", userRepositories, nil
+	return "timeline.html", userRepositories, err
 }
 
 func formatRepositories(r apiRepositories) RepositoryData {
@@ -99,14 +91,6 @@ func formatRepositories(r apiRepositories) RepositoryData {
 
 	sortedRepositories := sortRepositoriesByCreatedDate(repositories)
 	return RepositoryData{sortedRepositories}
-}
-
-func getEnv(key, def string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-
-	return def
 }
 
 func sortRepositoriesByCreatedDate(repositories Repositories) Repositories {
