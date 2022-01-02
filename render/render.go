@@ -43,7 +43,12 @@ func Render(h PageHandler) http.HandlerFunc {
 			http.Error(w, ErrRenderingPage, http.StatusInternalServerError)
 			return
 		}
-		io.Copy(w, &b)
+		_, err = io.Copy(w, &b)
+		if err != nil {
+			fmt.Printf("Error executing template: %s\n", err)
+			http.Error(w, ErrRenderingPage, http.StatusInternalServerError)
+			return
+		}
 	}
 	return fn
 }
