@@ -19,7 +19,7 @@ func TestRenderHomepage(t *testing.T) {
 	}
 
 	template, expectedResponse, err := client.RenderHomepage()
-	assert.Equal(t, template, "home.html")
+	assert.Equal(t, template, "home.gotmpl")
 	assert.Equal(t, nil, err)
 	assert.Equal(t, nil, expectedResponse)
 }

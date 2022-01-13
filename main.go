@@ -11,11 +11,11 @@ import (
 )
 
 func Configure() http.Handler {
-	render.Register("home.html",
-		template.Must(template.ParseFiles( "web/templates/index.html", "web/templates/home.html")),
+	render.Register("home.gotmpl",
+		template.Must(template.ParseFiles( "web/templates/index.gotmpl", "web/templates/home.gotmpl")),
 	)
-	render.Register("timeline.html",
-		template.Must(template.ParseFiles("web/templates/index.html", "web/templates/timeline.html")),
+	render.Register("timeline.gotmpl",
+		template.Must(template.ParseFiles("web/templates/index.gotmpl", "web/templates/timeline.gotmpl")),
 	)
 
 	apiUrl := getEnv("API_URL", "")

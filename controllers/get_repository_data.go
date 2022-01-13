@@ -48,25 +48,26 @@ type RepositoryData struct {
 }
 
 const userFacingDateFormat string = "02/01/2006"
+const timelineTemplate string = "timeline.gotmpl"
 
 func (c *Client) GetRepositoryData() (string, interface{}, error) {
 	var result apiRepositories
 
 	req, err := c.newRequest(http.MethodGet, "/api/v1/repositories", nil)
 	if err != nil {
-		return "timeline.html", result, err
+		return timelineTemplate, result, err
 	}
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return "timeline.html", result, err
+		return timelineTemplate, result, err
 	}
 
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	userRepositories := formatRepositories(result)
-	return "timeline.html", userRepositories, err
+	return timelineTemplate, userRepositories, err
 }
 
 func formatRepositories(r apiRepositories) RepositoryData {
