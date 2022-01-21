@@ -1,7 +1,8 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sort"
 	"time"
@@ -13,9 +14,9 @@ type Owner struct {
 
 type Repository struct {
 	ID        int
-	Name      string
-	Owner     Owner
-	URL       string
+	Name  string
+	Owner Owner
+	URL   string
 	CreatedAt string
 	UpdatedAt string
 	PushedAt  string
@@ -27,9 +28,9 @@ type Repositories []Repository
 
 type apiRepository struct {
 	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Owner     Owner  `json:"owner"`
-	URL       string `json:"html_url"`
+	Name  string `json:"name"`
+	Owner Owner  `json:"owner"`
+	URL   string `json:"html_url"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	PushedAt  string `json:"pushed_at"`
@@ -48,26 +49,26 @@ type RepositoryData struct {
 }
 
 const userFacingDateFormat string = "02/01/2006"
-const timelineTemplate string = "timeline.gotmpl"
 
-func (c *Client) GetRepositoryData() (string, interface{}, error) {
+func (c *Client) GetRepositoryData(username string) (RepositoryData, error){
 	var result apiRepositories
 
-	req, err := c.newRequest(http.MethodGet, "/api/v1/repositories", nil)
+	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("/users/%s/repos", username), nil)
+
 	if err != nil {
-		return timelineTemplate, result, err
+		return RepositoryData{}, err
 	}
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return timelineTemplate, result, err
+		return RepositoryData{}, err
 	}
 
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	userRepositories := formatRepositories(result)
-	return timelineTemplate, userRepositories, err
+	return userRepositories, err
 }
 
 func formatRepositories(r apiRepositories) RepositoryData {

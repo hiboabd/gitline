@@ -1,43 +1,66 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/hiboabd/gitline/controllers"
-	"github.com/hiboabd/gitline/render"
+	"github.com/hiboabd/gitline/internal/controllers"
+	"github.com/hiboabd/gitline/internal/handlers"
 	"html/template"
 	"net/http"
 	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
+	"time"
 )
-
-func Configure() http.Handler {
-	render.Register("home.gotmpl",
-		template.Must(template.ParseFiles( "web/templates/index.gotmpl", "web/templates/home.gotmpl")),
-	)
-	render.Register("timeline.gotmpl",
-		template.Must(template.ParseFiles("web/templates/index.gotmpl", "web/templates/timeline.gotmpl")),
-	)
-
-	apiUrl := getEnv("API_URL", "")
-	client, err := controllers.NewClient(http.DefaultClient, apiUrl)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-	}
-
-	router := mux.NewRouter()
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
-	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./web/assets"))))
-	router.HandleFunc("/", render.Render(client.RenderHomepage))
-	router.HandleFunc("/timeline", render.Render(client.GetRepositoryData))
-
-	return router
-}
 
 func main() {
 	port := getEnv("PORT", "1235")
-	err := http.ListenAndServe(":" + port, Configure())
+	webDir := getEnv("WEB_DIR", "web")
+	apiUrl := getEnv("API_URL", "")
+
+	layouts, _ := template.
+		New("").
+		Funcs(map[string]interface{}{}).
+		ParseGlob(webDir + "/templates/*.gotmpl")
+
+	files, _ := filepath.Glob(webDir + "/templates/*.gotmpl")
+	tmpls := map[string]*template.Template{}
+
+	for _, file := range files {
+		tmpls[filepath.Base(file)] = template.Must(template.Must(layouts.Clone()).ParseFiles(file))
+	}
+
+	client, err := handlers.NewClient(http.DefaultClient, apiUrl)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+	}
+
+	s := &http.Server{
+		Addr:    ":" + port,
+		Handler: controllers.New(client, tmpls, webDir),
+	}
+
+	go func() {
+		if err := s.ListenAndServe(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	fmt.Println("Running at :" + port)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+
+	sig := <-c
+	fmt.Println("signal received: ", sig)
+
+
+	tc, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := s.Shutdown(tc); err != nil {
+		fmt.Println(err)
 	}
 }
 

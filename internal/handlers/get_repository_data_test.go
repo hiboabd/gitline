@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"bytes"
@@ -57,8 +57,7 @@ func TestGetRepositoryData(t *testing.T) {
 		},
 	}
 
-	template, userRepositories, err := client.GetRepositoryData()
-	assert.Equal(t, template, "timeline.gotmpl")
+	userRepositories, err := client.GetRepositoryData("test")
 	assert.Equal(t, nil, err)
 	assert.Equal(t, expectedData, userRepositories)
 }

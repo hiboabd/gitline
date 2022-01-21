@@ -19,7 +19,8 @@
   "scripts": {
     "cypress": "cypress open",
     "build": "webpack",
-    "test-controllers": "cd controllers && go test"
+    "test-controllers": "cd internal/controllers && go test",
+    "test-handlers": "cd internal/handlers && go test"
   },
   "repository": {
     "type": "git",

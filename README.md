@@ -45,8 +45,6 @@ This hosts it on `localhost:1235`
 
 ## Run Unit/Integration tests
 
-To run unit/integration tests locally, run `npm run test-controllers`.
-
-This will execute the tests. 
+To run unit/integration tests locally, run `npm run test-handlers` and `npm run test-controllers`.
  
 -------------------------------------------------------------------

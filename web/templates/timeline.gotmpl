@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="yearly-timeline">
-                    {{ range .Repositories }}
+                    {{ range .UserRepositories.Repositories }}
                         <div class="timeline">
                             <a href="{{.URL}}" class="timeline-content">
                                 <h3 class="title">{{.Name}}</h3>
@@ -30,9 +30,6 @@
                                         </div>
                                     {{ end }}
                                 </div>
-{{/*                                {{ if .Description }}*/}}
-{{/*                                    <p class="description">{{.Description}}</p>*/}}
-{{/*                                {{end}}*/}}
                             </a>
                         </div>
                     {{ end }}
