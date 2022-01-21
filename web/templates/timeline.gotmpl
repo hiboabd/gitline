@@ -1,0 +1,40 @@
+{{ define "main" }}
+    <div class="timeline-page-title">
+        <h1>Timeline</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="yearly-timeline">
+                    {{ range .UserRepositories.Repositories }}
+                        <div class="timeline">
+                            <a href="{{.URL}}" class="timeline-content">
+                                <h3 class="title">{{.Name}}</h3>
+                                <div class="profile-card-inf">
+                                    {{ if .CreatedAt }}
+                                        <div class="profile-card-inf__item">
+                                            <div class="profile-card-inf__title">{{.CreatedAt}}</div>
+                                            <div class="profile-card-inf__txt">Created At</div>
+                                        </div>
+                                    {{ end }}
+                                    {{ if .Size }}
+                                        <div class="profile-card-inf__item">
+                                            <div class="profile-card-inf__title">{{.Size}}</div>
+                                            <div class="profile-card-inf__txt">Size</div>
+                                        </div>
+                                    {{ end }}
+                                    {{ if .Language }}
+                                        <div class="profile-card-inf__item">
+                                            <div class="profile-card-inf__title">{{.Language}}</div>
+                                            <div class="profile-card-inf__txt">Language</div>
+                                        </div>
+                                    {{ end }}
+                                </div>
+                            </a>
+                        </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

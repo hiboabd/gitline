@@ -6,3 +6,5 @@ services:
       context: ..
       dockerfile: ./docker/gitline/Dockerfile
     ports: ["3001:1235"]
+    environment:
+      API_URL: https://api.github.com

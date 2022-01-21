@@ -1,24 +1,66 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
-	"github.com/hiboabd/gitline/controllers"
+	"context"
+	"fmt"
+	"github.com/hiboabd/gitline/internal/controllers"
+	"github.com/hiboabd/gitline/internal/handlers"
+	"html/template"
+	"net/http"
 	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
+	"time"
 )
 
 func main() {
 	port := getEnv("PORT", "1235")
-	router := gin.Default()
-	router.LoadHTMLGlob("web/templates/*")
-	router.Use(static.Serve("/assets", static.LocalFile("./web/assets", true)))
-	router.Use(static.Serve("/static", static.LocalFile("./web/static", true)))
+	webDir := getEnv("WEB_DIR", "web")
+	apiUrl := getEnv("API_URL", "")
 
-	router.GET("/", controllers.RenderHomepage)
+	layouts, _ := template.
+		New("").
+		Funcs(map[string]interface{}{}).
+		ParseGlob(webDir + "/templates/*.gotmpl")
 
-	err := router.Run(":" + port)
+	files, _ := filepath.Glob(webDir + "/templates/*.gotmpl")
+	tmpls := map[string]*template.Template{}
+
+	for _, file := range files {
+		tmpls[filepath.Base(file)] = template.Must(template.Must(layouts.Clone()).ParseFiles(file))
+	}
+
+	client, err := handlers.NewClient(http.DefaultClient, apiUrl)
 	if err != nil {
-		return
+		fmt.Println(err)
+	}
+
+	s := &http.Server{
+		Addr:    ":" + port,
+		Handler: controllers.New(client, tmpls, webDir),
+	}
+
+	go func() {
+		if err := s.ListenAndServe(); err != nil {
+			fmt.Println(err)
+		}
+	}()
+
+	fmt.Println("Running at :" + port)
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+
+	sig := <-c
+	fmt.Println("signal received: ", sig)
+
+
+	tc, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := s.Shutdown(tc); err != nil {
+		fmt.Println(err)
 	}
 }
 

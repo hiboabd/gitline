@@ -11,3 +11,14 @@ services:
         - '3001:1235'
     volumes:
         - ..:/app:rw,delegated
+    environment:
+      API_URL: http://mock-server:2000
+
+  mock-server:
+    build:
+      context: ..
+      dockerfile: ./docker/mock-server/Dockerfile
+    ports:
+      - '2000:2000'
+    volumes:
+      - ..:/app:rw,delegated
