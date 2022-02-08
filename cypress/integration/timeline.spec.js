@@ -5,11 +5,7 @@ describe("Timeline", () => {
     });
 
     it("displays timeline content when username submitted", () => {
-        beforeEach(() => {
-            cy.visit(
-                "/"
-            );
-        });
+        cy.visit("/");
         cy.get("#username").type("Github Username");
         cy.get("#submit-username-form").submit();
         cy.get("h1").should("contain", "Timeline");
