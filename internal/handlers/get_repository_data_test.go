@@ -14,8 +14,7 @@ func TestGetRepositoryData(t *testing.T) {
 	mockClient := &mocks.MockClient{}
 	client, _ := NewClient(mockClient, "http://mock-server:2000")
 
-	json := `{"repositories": [
-			{
+	json := `[{
 			"id": 1,
 			"name": "Repository 1",
 			"owner": {
@@ -27,8 +26,7 @@ func TestGetRepositoryData(t *testing.T) {
 			"pushed_at": "2020-05-13T09:29:56Z",
 			"size": 70,
 			"language": "JavaScript"
-			}
-		]}`
+			}]`
 
 	r := ioutil.NopCloser(bytes.NewReader([]byte(json)))
 
@@ -119,10 +117,7 @@ func TestFormatRepositories(t *testing.T) {
 	unformattedRepository1.Size = 40
 	unformattedRepository1.Language = "Golang"
 
-	unformattedRepositoryList := RepositoriesList{unformattedRepository1}
-	unformattedData := apiRepositories{
-		unformattedRepositoryList,
-	}
+	unformattedData := RepositoriesList{unformattedRepository1}
 
 	expectedResponse := RepositoryData{
 		Repositories: Repositories{

@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
 	"io"
+	"log"
 	"net/http"
+	"os"
 )
 
 type ClientError string
@@ -33,8 +37,21 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 		return nil, err
 	}
 
-	req.Header.Add("OPG-Bypass-Membrane", "1")
+	personalAccessToken := GetEnvVariable("PERSONAL_ACCESS_TOKEN")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", personalAccessToken))
 
 	return req, err
 }
 
+func GetEnvVariable(key string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	} else {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatalf("Error loading .env file")
+		}
+
+		return os.Getenv(key)
+	}
+}

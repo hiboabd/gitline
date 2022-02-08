@@ -24,10 +24,6 @@ type Repository struct {
 	Language string `json:"language"`
 }
 
-type Repositories struct {
-	Repositories []Repository `json:"repositories"`
-}
-
 func GetRepos (w http.ResponseWriter, r *http.Request) {
 	jsonFile, err := os.Open("response.json")
 	if err != nil {
@@ -45,7 +41,7 @@ func GetRepos (w http.ResponseWriter, r *http.Request) {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
 	// we initialize our repositories array
-	var repositories Repositories
+	var repositories []Repository
 
 	// we unmarshal our byteArray which contains our
 	// jsonFile's content into 'users' which we defined above
