@@ -8,7 +8,7 @@ services:
     environment:
         PORT: 3001
         API_URL: http://mock-server:2000
-        PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+        PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
     ports:
       - '3001:1235'
     depends_on:

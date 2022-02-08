@@ -8,4 +8,4 @@ services:
     ports: ["3001:1235"]
     environment:
       API_URL: https://api.github.com
-      PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
