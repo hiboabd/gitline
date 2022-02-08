@@ -35,6 +35,8 @@ jobs:
       - run: mkdir -p /tmp/test-results
 
       - name: Run Tests
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           gotestsum --junitfile /tmp/test-results/unit-tests.xml -- ./... -coverprofile=/tmp/test-coverage.txt
   lint:
@@ -50,6 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run cypress
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           docker-compose -f docker/docker-compose.ci.yml run cypress
   deploy:
