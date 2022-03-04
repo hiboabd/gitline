@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -73,8 +74,8 @@ func errorHandler() func(pageHandler PageHandler) http.Handler {
 					return
 				}
 
-				fmt.Printf("Error handling request: %s\n", err)
-				http.Error(w, ErrRenderingPage, http.StatusInternalServerError)
+				log.Printf("Error handling request: %s\n", err.Error())
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		})
