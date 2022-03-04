@@ -3,6 +3,7 @@ package handlers
 import (
 	"io"
 	"net/http"
+	"os"
 )
 
 type ClientError string
@@ -33,8 +34,12 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 		return nil, err
 	}
 
-	req.Header.Add("OPG-Bypass-Membrane", "1")
-
 	return req, err
 }
 
+func GetEnv(key, def string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return def
+}

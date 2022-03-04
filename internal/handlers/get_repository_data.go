@@ -14,9 +14,9 @@ type Owner struct {
 
 type Repository struct {
 	ID        int
-	Name  string
-	Owner Owner
-	URL   string
+	Name      string
+	Owner     Owner
+	URL       string
 	CreatedAt string
 	UpdatedAt string
 	PushedAt  string
@@ -28,9 +28,9 @@ type Repositories []Repository
 
 type apiRepository struct {
 	ID        int    `json:"id"`
-	Name  string `json:"name"`
-	Owner Owner  `json:"owner"`
-	URL   string `json:"html_url"`
+	Name      string `json:"name"`
+	Owner     Owner  `json:"owner"`
+	URL       string `json:"html_url"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	PushedAt  string `json:"pushed_at"`
@@ -40,20 +40,18 @@ type apiRepository struct {
 
 type RepositoriesList []apiRepository
 
-type apiRepositories struct {
-	Repositories []apiRepository `json:"repositories"`
-}
-
 type RepositoryData struct {
 	Repositories Repositories
 }
 
 const userFacingDateFormat string = "02/01/2006"
 
-func (c *Client) GetRepositoryData(username string) (RepositoryData, error){
-	var result apiRepositories
+func (c *Client) GetRepositoryData(username string) (RepositoryData, error) {
+	var result RepositoriesList
 
 	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("/users/%s/repos", username), nil)
+	personalAccessToken := GetEnv("PERSONAL_ACCESS_TOKEN", "")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", personalAccessToken))
 
 	if err != nil {
 		return RepositoryData{}, err
@@ -71,9 +69,9 @@ func (c *Client) GetRepositoryData(username string) (RepositoryData, error){
 	return userRepositories, err
 }
 
-func formatRepositories(r apiRepositories) RepositoryData {
+func formatRepositories(r RepositoriesList) RepositoryData {
 	var repositories Repositories
-	for _, t := range r.Repositories {
+	for _, t := range r {
 		var repository = Repository{
 			ID:   t.ID,
 			Name: t.Name,
