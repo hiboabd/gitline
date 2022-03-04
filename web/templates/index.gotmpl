@@ -15,6 +15,7 @@
     </head>
     <body>
     <div class="main-container">
+        {{ template "header" . }}
         <main>
             {{ block "main" .}} {{ end }}
         </main>

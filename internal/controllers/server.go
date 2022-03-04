@@ -5,15 +5,11 @@ import (
 	"github.com/gorilla/mux"
 	"html/template"
 	"io"
-	"log"
 	"net/http"
 )
 
 type PageHandler func(w http.ResponseWriter, r *http.Request) error
 
-const (
-	ErrRenderingPage = "Error rendering page"
-)
 type Redirect string
 
 func (e Redirect) Error() string {
@@ -74,8 +70,7 @@ func errorHandler() func(pageHandler PageHandler) http.Handler {
 					return
 				}
 
-				log.Printf("Error handling request: %s\n", err.Error())
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Error rendering page: " + err.Error(), http.StatusInternalServerError)
 				return
 			}
 		})

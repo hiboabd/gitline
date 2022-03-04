@@ -1,19 +1,22 @@
 {{ define "main" }}
-    <div class="wrapper">
-        <h1 class="heading">Gitline</h1>
-    </div>
-    <div class="wrapper blue-background">
-        <form id="submit-username-form" method="post">
-            <p>Form</p>
-            <div>
-                <label for="username">Github Username:</label><br>
-                <input type="text" id="username" name="username" placeholder="e.g.hiboabd"><br>
-            </div>
-            <div>
-                <button class="" type="submit">
-                    Submit
-                </button>
-            </div>
-        </form>
+    <div class="header-container">
+        <div class="text-wrapper">
+            <h1 class="heading">Gitline</h1>
+            <h3 class="sub-heading">Gitline takes a username and displays user Github repository
+                activity across time. Enter a username to get started.</h3>
+            <form class="username-form" id="submit-username-form" method="post">
+                <div>
+                    <input class="username-input" type="text" id="username" name="username" placeholder="Enter a Github username"><br>
+                </div>
+                <div>
+                    <button class="username-button" type="submit">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <img src="/static/images/hero-rocket.svg" class="hero"/>
+        </div>
     </div>
 {{ end }}

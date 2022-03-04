@@ -55,7 +55,6 @@ func main() {
 	sig := <-c
 	fmt.Println("signal received: ", sig)
 
-
 	tc, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 

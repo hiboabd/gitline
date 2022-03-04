@@ -28,6 +28,7 @@ WORKDIR /app
 RUN mkdir -p web/static
 
 COPY web/assets web/assets
+COPY web/assets/images web/static/images
 COPY webpack.config.js .
 COPY package.json .
 COPY yarn.lock .
