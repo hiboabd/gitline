@@ -1,5 +1,4 @@
 {
   "baseUrl": "http://localhost:3001",
-  "supportFile": false,
-  "chromeWebSecurity": false
+  "supportFile": false
 }

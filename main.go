@@ -15,9 +15,13 @@ import (
 )
 
 func main() {
-	port := getEnv("PORT", "1235")
-	webDir := getEnv("WEB_DIR", "web")
-	apiUrl := getEnv("API_URL", "")
+	port := handlers.GetEnv("PORT", "1235")
+	webDir := handlers.GetEnv("WEB_DIR", "web")
+	apiUrl := handlers.GetEnv("API_URL", "")
+
+	fmt.Println("port", port)
+	fmt.Println("web dir", webDir)
+	fmt.Println("api url", apiUrl)
 
 	layouts, _ := template.
 		New("").
@@ -62,12 +66,4 @@ func main() {
 	if err := s.Shutdown(tc); err != nil {
 		fmt.Println(err)
 	}
-}
-
-func getEnv(key, def string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-
-	return def
 }

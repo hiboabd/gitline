@@ -50,6 +50,8 @@ func (c *Client) GetRepositoryData(username string) (RepositoryData, error) {
 	var result RepositoriesList
 
 	req, err := c.newRequest(http.MethodGet, fmt.Sprintf("/users/%s/repos", username), nil)
+	personalAccessToken := GetEnv("PERSONAL_ACCESS_TOKEN", "")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", personalAccessToken))
 
 	if err != nil {
 		return RepositoryData{}, err

@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"fmt"
-	"github.com/joho/godotenv"
 	"io"
-	"log"
 	"net/http"
 	"os"
 )
@@ -37,21 +34,12 @@ func (c *Client) newRequest(method, path string, body io.Reader) (*http.Request,
 		return nil, err
 	}
 
-	personalAccessToken := GetEnvVariable("PERSONAL_ACCESS_TOKEN")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", personalAccessToken))
-
 	return req, err
 }
 
-func GetEnvVariable(key string) string {
+func GetEnv(key, def string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
-	} else {
-		err := godotenv.Load(".env")
-		if err != nil {
-			log.Fatalf("Error loading .env file")
-		}
-
-		return os.Getenv(key)
 	}
+	return def
 }
