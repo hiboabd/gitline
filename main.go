@@ -19,10 +19,6 @@ func main() {
 	webDir := handlers.GetEnv("WEB_DIR", "web")
 	apiUrl := handlers.GetEnv("API_URL", "")
 
-	fmt.Println("port", port)
-	fmt.Println("web dir", webDir)
-	fmt.Println("api url", apiUrl)
-
 	layouts, _ := template.
 		New("").
 		Funcs(map[string]interface{}{}).
