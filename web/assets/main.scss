@@ -104,12 +104,44 @@ h1 {
 
 .timeline-page-title {
     h1 {
-        margin: 32px 0px;
-        font-size: 100px;
+        margin-bottom: 32px;
+        font-size: 80px;
         width: 100%;
         text-align: center;
     }
 }
+
+.no-results-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    p {
+        font-size: 30px;
+        margin: none;
+    }
+}
+
+.no-results {
+    height: 500px;
+}
+
+.error-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 500px;
+}
+
+.error-image {
+    position: absolute;
+    top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    height: 600px;
+}
+
 
 /* Timeline styling source: https://codepen.io/aashimajain19/pen/ExXBmYO */
 

@@ -5,7 +5,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="yearly-timeline">
+                <h1 class="yearly-timeline">
                     {{ range .UserRepositories.Repositories }}
                         <div class="timeline">
                             <a href="{{.URL}}" class="timeline-content">
@@ -33,6 +33,12 @@
                             </a>
                         </div>
                     {{ end }}
+                    {{if not .UserRepositories.Repositories }}
+                        <div class="no-results-container">
+                            <p class="sub-heading">Looks like you have no repositories! Click home to try another username.</p>
+                            <img src="/static/images/no_results.svg" class="no-results"/>
+                        </div>
+                    {{end}}
                 </div>
             </div>
         </div>

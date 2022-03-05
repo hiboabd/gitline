@@ -1,0 +1,16 @@
+{{ template "index" . }}
+
+{{ define "title" }}
+    {{ if eq .Code 404 }}
+        Page not found
+    {{ else }}
+        Sorry, there is a problem with the service
+    {{ end }}
+{{ end }}
+
+{{ define "main" }}
+    <img src="/static/images/error.svg" class="error-image"/>
+    <div class="error-container">
+        <h1>Oh no! Something went wrong. Please try again.</h1>
+    </div>
+{{ end }}
