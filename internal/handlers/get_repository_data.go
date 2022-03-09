@@ -38,6 +38,14 @@ type apiRepository struct {
 	Language  string `json:"language"`
 }
 
+type apiError struct {
+	Message string `json:"message"`
+}
+
+func (e apiError) Error() string {
+	return e.Message
+}
+
 type RepositoriesList []apiRepository
 
 type RepositoryData struct {
@@ -59,12 +67,18 @@ func (c *Client) GetRepositoryData(username string) (RepositoryData, error) {
 
 	resp, err := c.http.Do(req)
 	if err != nil {
+		fmt.Println("error!", err)
 		return RepositoryData{}, err
 	}
 
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		var notFoundResp apiError
+		notFoundResp.Message = "Something went wrong."
+		return RepositoryData{}, notFoundResp
+	}
 	userRepositories := formatRepositories(result)
 	return userRepositories, err
 }

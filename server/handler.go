@@ -44,7 +44,7 @@ func GetRepos (w http.ResponseWriter, r *http.Request) {
 	var repositories []Repository
 
 	// we unmarshal our byteArray which contains our
-	// jsonFile's content into 'users' which we defined above
+	// jsonFile's content into 'repositories' which we defined above
 	err = json.Unmarshal(byteValue, &repositories)
 	if err != nil {
 		fmt.Println(err)

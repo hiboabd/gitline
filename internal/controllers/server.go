@@ -5,15 +5,11 @@ import (
 	"github.com/gorilla/mux"
 	"html/template"
 	"io"
-	"log"
 	"net/http"
 )
 
 type PageHandler func(w http.ResponseWriter, r *http.Request) error
 
-const (
-	ErrRenderingPage = "Error rendering page"
-)
 type Redirect string
 
 func (e Redirect) Error() string {
@@ -45,7 +41,7 @@ type Template interface {
 }
 
 func New(client Client, templates map[string]*template.Template, webDir string) http.Handler {
-	wrap := errorHandler()
+	wrap := errorHandler(templates["error.gotmpl"])
 
 	router := mux.NewRouter()
 	router.Handle("/",
@@ -56,14 +52,20 @@ func New(client Client, templates map[string]*template.Template, webDir string) 
 			renderTimeline(client, templates["timeline.gotmpl"])))
 
 	static := http.FileServer(http.Dir(webDir + "/static"))
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", static))
-	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", static))
-	router.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", static))
+	router.PathPrefix("/assets/").Handler(static)
+	router.PathPrefix("/javascript/").Handler(static)
+	router.PathPrefix("/stylesheets/").Handler(static)
+	router.PathPrefix("/images/").Handler(static)
 
-	return router
+	return http.StripPrefix("", router)
 }
 
-func errorHandler() func(pageHandler PageHandler) http.Handler {
+type errorVars struct {
+	Code      int
+	Error     string
+}
+
+func errorHandler(tmplError Template) func(pageHandler PageHandler) http.Handler {
 	return func(pageHandler PageHandler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			err := pageHandler(w, r)
@@ -74,9 +76,22 @@ func errorHandler() func(pageHandler PageHandler) http.Handler {
 					return
 				}
 
-				log.Printf("Error handling request: %s\n", err.Error())
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				code := http.StatusInternalServerError
+				if status, ok := err.(StatusError); ok {
+					if status.Code() == http.StatusForbidden || status.Code() == http.StatusNotFound {
+						code = status.Code()
+					}
+				}
+
+				w.WriteHeader(code)
+				err = tmplError.ExecuteTemplate(w, "index", errorVars{
+					Code:      code,
+					Error:     err.Error(),
+				})
+
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
 			}
 		})
 	}
