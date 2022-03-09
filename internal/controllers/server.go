@@ -52,11 +52,12 @@ func New(client Client, templates map[string]*template.Template, webDir string) 
 			renderTimeline(client, templates["timeline.gotmpl"])))
 
 	static := http.FileServer(http.Dir(webDir + "/static"))
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", static))
-	router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", static))
-	router.PathPrefix("/javascript/").Handler(http.StripPrefix("/javascript/", static))
+	router.PathPrefix("/assets/").Handler(static)
+	router.PathPrefix("/javascript/").Handler(static)
+	router.PathPrefix("/stylesheets/").Handler(static)
+	router.PathPrefix("/images/").Handler(static)
 
-	return router
+	return http.StripPrefix("", router)
 }
 
 type errorVars struct {
