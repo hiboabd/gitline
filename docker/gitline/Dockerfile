@@ -15,9 +15,7 @@ FROM node:16.13.0-alpine3.14 as asset-env
 
 WORKDIR /app
 
-RUN mkdir -p web/static
 COPY web/assets web/assets
-COPY web/assets/images web/static/images
 COPY webpack.config.js .
 COPY package.json .
 COPY yarn.lock .
@@ -30,7 +28,6 @@ FROM base AS dev
 WORKDIR /app
 
 COPY --from=asset-env /app/web/static web/static
-COPY --from=asset-env /app/web/assets/images web/static
 
 RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
 EXPOSE 3001
