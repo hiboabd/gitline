@@ -28,7 +28,6 @@ FROM base AS dev
 WORKDIR /app
 
 COPY --from=asset-env /app/web/static web/static
-COPY --from=asset-env /app/web/assets/images web/static/images
 
 RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
 EXPOSE 3001

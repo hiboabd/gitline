@@ -37,7 +37,7 @@ This hosts it on `localhost:1235`
 
 ## Run Cypress tests
 
-`docker-compose -f docker/docker-compose.ci.yml up -d --build --force-recreate`
+`docker-compose -f docker/docker-compose.dev.yml up -d --build --force-recreate`
 
 `yarn && yarn cypress`
     
