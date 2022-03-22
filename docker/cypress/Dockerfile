@@ -5,7 +5,7 @@ WORKDIR /root
 RUN npm install "cypress-failed-log@2.9.2"
 
 ENV CYPRESS_VIDEO=false
-ENV CYPRESS_baseUrl=http://pro-deputy-hub:8888
+ENV CYPRESS_baseUrl=http://gitline:3001
 
 COPY cypress.json .
 COPY cypress cypress
