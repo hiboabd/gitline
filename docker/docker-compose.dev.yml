@@ -5,7 +5,6 @@ services:
     build:
       context: ..
       dockerfile: ./docker/gitline/Dockerfile
-      target: dev
     ports:
         - '2346:2346'
         - '3001:1235'
